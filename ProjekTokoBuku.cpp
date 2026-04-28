@@ -23,6 +23,7 @@ DataBuku *tail = nullptr;
 void admin();
 void lihatKatalogBuku();
 void loadFileBuku();
+void pindahKeLinkedList(char isbn[], char judul[], char penulis[], int stok, double harga);
 
 int main()
 {
@@ -67,11 +68,33 @@ void loadFileBuku() {
     double harga;
 
     while (fscanf(fptr, "%[^;];%[^;];%[^;];%d;%lf\n", isbn, judul, penulis, &stok, &harga)) {
-        //masukkan fungsi tambah linked list
+        pindahKeLinkedList(isbn, judul, penulis, stok, harga);
     }
     
     fclose(fptr);
 
+}
+
+void pindahKeLinkedList(char isbn[], char judul[], char penulis[], int stok, double harga) {
+    DataBuku *newNode =  (DataBuku *) malloc(sizeof(DataBuku));
+
+    strcpy(newNode->isbn, isbn);
+    strcpy(newNode->judul, judul);
+    strcpy(newNode->penulis, penulis);
+    newNode->stok = stok;
+    newNode->harga = harga;
+
+    newNode->next = NULL;
+    newNode->prev = NULL;
+    
+    if (head == NULL) {
+        head = tail = newNode;
+    }
+    else {
+        tail->next = newNode;
+        newNode->prev = tail;
+        tail = newNode;
+    }
 }
 
 void admin() {
