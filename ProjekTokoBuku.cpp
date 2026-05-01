@@ -27,6 +27,8 @@ void simpanKeFile();
 void urutkanKatalogBuku();
 void lihatKatalogBuku();
 void tambahBuku();
+void hapusBuku();
+void updateStokBuku();
 
 int main()
 {
@@ -101,39 +103,47 @@ void pindahKeLinkedList(char isbn[], char judul[], char penulis[], int stok, dou
 }
 
 void admin() {
-    //system("cls");
     int opsiAdmin;
-    bool pilihAdmin = false;
-    cout << "| ==== MENU ADMIN ==== |" << endl;
-    cout << "[1] Lihat Katalog" << endl;
-    cout << "[2] Tambah Buku" << endl;
-    cout << "[3] Hapus Buku" << endl;
-    cout << "[4] Update Stok Buku" << endl;
-    cout << "[5] Kembali ke Menu Utama" << endl;
-    cout << "Pilih menu: "; cin >> opsiAdmin;
 
-    while (!pilihAdmin) {
+    while (true) {
+        cout << "\n| ==== MENU ADMIN ==== |" << endl;
+        cout << "[1] Lihat Katalog" << endl;
+        cout << "[2] Tambah Buku" << endl;
+        cout << "[3] Hapus Buku" << endl;
+        cout << "[4] Update Stok Buku" << endl;
+        cout << "[5] Kembali ke Menu Utama" << endl;
+        cout << "Pilih menu: ";
+        cin >> opsiAdmin;
+
+        // 🔥 HANDLE ERROR INPUT
+        if (cin.fail()) {
+            cout << "Input tidak valid\n";
+            cin.clear();
+            cin.ignore(1000, '\n');
+            continue;
+        }
+
         switch (opsiAdmin) {
         case 1:
-            pilihAdmin = true;
             lihatKatalogBuku();
             break;
         case 2:
-            pilihAdmin = true;
             tambahBuku();
             break;
+        case 3:
+            hapusBuku();
+            break;
+        case 4:
+            updateStokBuku();
+            break;
         case 5:
-            pilihAdmin = true;
-            main();
-            break;
+            return; 
         default:
-            cout << "Input tidak valid" << endl;
-            break;
+            cout << "Input tidak valid\n";
         }
     }
-    
 }
-
+    
 void simpanKeFile() {
     FILE *fptr;
     fptr = fopen("databuku.txt", "w");
@@ -146,7 +156,7 @@ void simpanKeFile() {
     DataBuku *temp = head;
 
     while (temp != NULL) {
-        fprintf(fptr, "%s;%s;%s;%d;%.2lf;\n", temp->isbn, temp->judul, temp->penulis, temp->stok, temp->harga);
+        fscanf(fptr, "%s;%s;%s;%d;%.2lf;\n", temp->isbn, temp->judul, temp->penulis, temp->stok, temp->harga);
         temp = temp->next;
     }
     fclose(fptr);
@@ -283,4 +293,86 @@ void tambahBuku() {
             cout << "Input tidak valid, silakan ulang" << endl;
         }
     }
+}
+
+void hapusBuku() {
+    char isbn[20];
+    cout << "Masukkan ISBN buku yang ingin dihapus: ";
+    cin >> isbn;
+
+    DataBuku *temp = head;
+
+    // Kalau data kosong
+    if (head == NULL) {
+        cout << "Data kosong!\n";
+        admin();
+        return;
+    }
+
+    while (temp != NULL) {
+        if (strcmp(temp->isbn, isbn) == 0) {
+
+            // 1. Kalau cuma 1 data
+            if (temp == head && temp == tail) {
+                head = tail = NULL;
+            }
+            // 2. Kalau di awal
+            else if (temp == head) {
+                head = head->next;
+                head->prev = NULL;
+            }
+            // 3. Kalau di akhir
+            else if (temp == tail) {
+                tail = tail->prev;
+                tail->next = NULL;
+            }
+            // 4. Kalau di tengah
+            else {
+                temp->prev->next = temp->next;
+                temp->next->prev = temp->prev;
+            }
+
+            free(temp);
+            simpanKeFile();
+
+            cout << "Buku berhasil dihapus!\n";
+            admin();
+            return;
+        }
+        temp = temp->next;
+    }
+
+    cout << "Buku tidak ditemukan!\n";
+    admin();
+}
+
+void updateStokBuku() {
+    char isbn[20];
+    cout << "Masukkan ISBN buku: ";
+    cin >> isbn;
+
+    DataBuku *temp = head;
+
+    if (head == NULL) {
+        cout << "Data kosong!\n";
+        admin();
+        return;
+    }
+
+    while (temp != NULL) {
+        if (strcmp(temp->isbn, isbn) == 0) {
+            cout << "Masukkan stok baru: ";
+            cin >> temp->stok;
+
+            simpanKeFile();
+
+            cout << "Stok berhasil diupdate!\n";
+            admin();
+            return;
+        }
+        temp = temp->next;
+    }
+
+    cout << "Buku tidak ditemukan!\n";
+    admin();
 }
