@@ -43,13 +43,24 @@ int main()
 
     loadFileBuku();
 
-    while (pilihRole) { // Perulangan jika input tidak valid
+    while (pilihRole) {
         cout << "PROGRAM MANAJEMEN TOKO BUKU" << endl;
-        cout << "MENU ROLE" << endl; // Memilih role
+        cout << "MENU ROLE" << endl;
         cout << "[1] Admin" << endl;
         cout << "[2] Kasir" << endl;
         cout << "[0] Keluar" << endl;
-        cout << "Silahkan pilih role anda: "; cin >> opsiRole;
+        cout << "Silahkan pilih role anda: ";
+
+        cin >> opsiRole;
+
+        // 🔥 INI YANG SELAMA INI GAK ADA
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "[ERROR] Input harus angka!\n";
+            continue;
+        }
+
         switch (opsiRole) {
             case 1:
                 cout << "Anda adalah admin" << endl;
@@ -59,13 +70,11 @@ int main()
                 cout << "Anda adalah kasir" << endl;
                 kasir();
                 break;
-            case 0: 
-                // system("cls");
+            case 0:
                 pilihRole = false;
                 cout << "[MESSAGE] Anda telah keluar. Terima kasih!" << endl;
                 break;
             default:
-                //system("cls");
                 cout << "[ERROR] Input tidak valid" << endl;
                 break;
         }
@@ -574,4 +583,107 @@ void lihatKeranjang() {
             exit(1);
         }
     }
+}
+
+void hapusKeranjang() {
+    if (keranjangHead == NULL) {
+        cout << "Keranjang kosong!\n";
+        return;
+    }
+
+    char isbn[20];
+    cout << "Masukkan ISBN yang ingin dihapus dari keranjang: ";
+    cin >> isbn;
+
+    DataBuku *temp = keranjangHead;
+
+    while (temp != NULL) {
+        if (strcmp(temp->isbn, isbn) == 0) {
+
+            // 1. Kalau cuma 1 data
+            if (temp == keranjangHead && temp == keranjangTail) {
+                keranjangHead = keranjangTail = NULL;
+            }
+            // 2. Kalau di awal
+            else if (temp == keranjangHead) {
+                keranjangHead = keranjangHead->next;
+                keranjangHead->prev = NULL;
+            }
+            // 3. Kalau di akhir
+            else if (temp == keranjangTail) {
+                keranjangTail = keranjangTail->prev;
+                keranjangTail->next = NULL;
+            }
+            // 4. Di tengah
+            else {
+                temp->prev->next = temp->next;
+                temp->next->prev = temp->prev;
+            }
+
+            free(temp);
+            cout << "Item berhasil dihapus dari keranjang!\n";
+            return;
+        }
+        temp = temp->next;
+    }
+
+    cout << "Item tidak ditemukan!\n";
+}
+
+void pembayaran() {
+    if (keranjangHead == NULL) {
+        cout << "Keranjang kosong!\n";
+        return;
+    }
+
+    DataBuku *temp = keranjangHead;
+    double total = 0;
+
+    // Hitung total
+    while (temp != NULL) {
+        total += temp->stok * temp->harga;
+        temp = temp->next;
+    }
+
+    cout << "Total pembayaran: Rp" << total << endl;
+
+    double uang;
+    do {
+        cout << "Masukkan uang: ";
+        cin >> uang;
+
+        if (uang < total) {
+            cout << "Uang kurang! Silakan input ulang.\n";
+        }
+
+    } while (uang < total);
+
+    // Update stok di katalog
+    temp = keranjangHead;
+    while (temp != NULL) {
+        DataBuku *katalog = head;
+
+        while (katalog != NULL) {
+            if (strcmp(katalog->isbn, temp->isbn) == 0) {
+                katalog->stok -= temp->stok;
+                break;
+            }
+            katalog = katalog->next;
+        }
+
+        temp = temp->next;
+    }
+
+    simpanKeFile();
+
+    cout << "Pembayaran berhasil!\n";
+    cout << "Kembalian: Rp" << uang - total << endl;
+
+    // Kosongkan keranjang
+    while (keranjangHead != NULL) {
+        DataBuku *hapus = keranjangHead;
+        keranjangHead = keranjangHead->next;
+        free(hapus);
+    }
+    keranjangTail = NULL;
 }
