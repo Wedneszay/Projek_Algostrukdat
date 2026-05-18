@@ -35,6 +35,8 @@ void kasir();
 void searchBuku();
 void tambahKeranjang(DataBuku *katalogBuku);
 void lihatKeranjang();
+void hapusKeranjang();
+void pembayaran();
 
 int main()
 {
@@ -44,6 +46,7 @@ int main()
     loadFileBuku();
 
     while (pilihRole) {
+        system("cls");
         cout << "PROGRAM MANAJEMEN TOKO BUKU" << endl;
         cout << "MENU ROLE" << endl;
         cout << "[1] Admin" << endl;
@@ -53,26 +56,18 @@ int main()
 
         cin >> opsiRole;
 
-        // 🔥 INI YANG SELAMA INI GAK ADA
-        if (cin.fail()) {
-            cin.clear();
-            cin.ignore(1000, '\n');
-            cout << "[ERROR] Input harus angka!\n";
-            continue;
-        }
-
         switch (opsiRole) {
             case 1:
-                cout << "Anda adalah admin" << endl;
                 admin();
                 break;
             case 2:
-                cout << "Anda adalah kasir" << endl;
                 kasir();
                 break;
             case 0:
                 pilihRole = false;
+                system("cls");
                 cout << "[MESSAGE] Anda telah keluar. Terima kasih!" << endl;
+                system("pause");
                 break;
             default:
                 cout << "[ERROR] Input tidak valid" << endl;
@@ -86,7 +81,7 @@ void loadFileBuku() {
     FILE *fptr;
     fptr = fopen ("databuku.txt", "r");
     if (fptr == NULL) {
-        cout << "Database tidak ditemukan, memulai dengan katalog kosong" << endl;
+        cout << "[ERROR] Database tidak ditemukan, memulai dengan katalog kosong" << endl;
         return;
     }
 
@@ -128,12 +123,15 @@ void admin() {
     int opsiAdmin;
     bool pilihAdmin = true;
     while (pilihAdmin) {
-        cout << "\n| ==== MENU ADMIN ==== |" << endl;
-        cout << "[1] Lihat Katalog" << endl;
-        cout << "[2] Tambah Buku" << endl;
-        cout << "[3] Hapus Buku" << endl;
-        cout << "[4] Update Stok Buku" << endl;
-        cout << "[5] Kembali ke Menu Utama" << endl;
+        system("cls");
+        cout << "=================================" << endl;
+        cout << "||          MENU ADMIN         ||" << endl;
+        cout << "=================================" << endl;
+        cout << "[1] Lihat Katalog              ||" << endl;
+        cout << "[2] Tambah Buku                ||" << endl;
+        cout << "[3] Hapus Buku                 ||" << endl;
+        cout << "[4] Update Stok Buku           ||" << endl;
+        cout << "[5] Kembali ke Menu Utama      ||" << endl;
         cout << "Pilih menu: ";
         cin >> opsiAdmin;
 
@@ -224,7 +222,7 @@ void urutkanKatalogBuku() {
 }
 
 void lihatKatalogBuku() {
-    //system("cls");
+    system("cls");
     urutkanKatalogBuku();
     bool kembali =  true;
     char backToMenu;
@@ -256,9 +254,9 @@ void lihatKatalogBuku() {
             return;
         }
         else if (toupper(backToMenu) == 'N') {
-            // system("cls");
-            cout << "Terima kasih!" << endl;
-            // system("pause");
+            system("cls");
+            cout << "[MESSAGE] Terima kasih!" << endl;
+            system("pause");
             exit(1);
         }
         else {
@@ -269,7 +267,7 @@ void lihatKatalogBuku() {
 }
 
 void tambahBuku() {
-    //system("cls");
+    system("cls");
     DataBuku *newNode = (DataBuku *) malloc(sizeof(DataBuku));
     bool kembali = true;
     char backToMenu;
@@ -306,11 +304,11 @@ void tambahBuku() {
     while (kembali) {
         cout << "Kembali ke Menu Admin (Y/N): "; cin >> backToMenu;
         if (toupper(backToMenu) == 'Y') {
-            admin();
+            return;
         }
         else if (toupper(backToMenu) == 'N') {
             system("cls");
-            cout << "Terima kasih!" << endl;
+            cout << "[MESSAGE] Terima kasih!" << endl;
             system("pause");
             exit(1);
         }
@@ -321,16 +319,22 @@ void tambahBuku() {
 }
 
 void hapusBuku() {
+    system("cls");
     DataBuku *temp = head;
     char isbn[20];
+    bool found = false, kembali = true;
+    char backToMenu;
     
     // Kalau data kosong
     if (head == NULL) {
         cout << "Data buku masih kosong, silakan isi melalui Menu Admin [2] Tambah Buku" << endl;
-        admin(); // Kembali ke menu admin
+        return; // Kembali ke menu admin
     }
 
-    cout << "Masukkan ISBN buku yang ingin dihapus: ";
+    cout << "==========================" << endl;
+    cout << "||      HAPUS BUKU      ||" << endl;
+    cout << "==========================" << endl;
+    cout << "Masukkan ISBN: ";
     cin >> isbn;
 
     while (temp != NULL) {
@@ -357,60 +361,99 @@ void hapusBuku() {
             }
 
             free(temp);
+            found = true;
             simpanKeFile();
-
-            cout << "Buku berhasil dihapus!\n";
-            admin();
-            return;
+            break;
         }
         temp = temp->next;
     }
-
-    cout << "Buku tidak ditemukan!\n";
-    admin();
+    if (found) {
+        cout << "[MESSAGE] Buku berhasil dihapus!\n";
+    }
+    else {
+        cout << "Buku tidak ditemukan!\n";
+    }
+    while (kembali) {
+        cout << "Kembali ke Menu Admin (Y/N): "; cin >> backToMenu;
+        if (toupper(backToMenu) == 'Y') {
+            return;
+        }
+        else if (toupper(backToMenu) == 'N') {
+            system("cls");
+            cout << "[MESSAGE] Terima kasih!" << endl;
+            system("pause");
+            exit(1);
+        }
+        else {
+            cout << "Input tidak valid, silakan ulang" << endl;
+        }
+    }
 }
 
 void updateStokBuku() {
+    system("cls");
     DataBuku *temp = head;
     char isbn[20];
+    bool found = false, kembali = true;
+    char backToMenu;
 
     if (head == NULL) {
         cout << "Data buku masih kosong, silakan isi melalui Menu Admin [2] Tambah Buku" << endl;
-        admin(); // Kembali ke menu admin
+        return; // Kembali ke menu admin
     }
-
-    cout << "Masukkan ISBN buku: ";
+    cout << "===========================" << endl;
+    cout << "||      UPDATE BUKU      ||" << endl;
+    cout << "===========================" << endl;
+    cout << "Masukkan ISBN: ";
     cin >> isbn;
 
     while (temp != NULL) {
         if (strcmp(temp->isbn, isbn) == 0) {
             cout << "Masukkan stok baru: ";
             cin >> temp->stok;
-
+            found = true;
             simpanKeFile();
-
-            cout << "Stok berhasil diupdate!\n";
-            admin();
-            return;
+            break;
         }
         temp = temp->next;
     }
-
-    cout << "Buku tidak ditemukan!\n";
-    admin();
+    if (found) {
+        cout << "[MESSAGE] Stok berhasil diupdate!\n";
+    }
+    else {
+        cout << "Buku tidak ditemukan!\n";
+    }
+    while (kembali) {
+        cout << "Kembali ke Menu Admin (Y/N): "; cin >> backToMenu;
+        if (toupper(backToMenu) == 'Y') {
+            return;
+        }
+        else if (toupper(backToMenu) == 'N') {
+            system("cls");
+            cout << "[MESSAGE] Terima kasih!" << endl;
+            system("pause");
+            exit(1);
+        }
+        else {
+            cout << "Input tidak valid, silakan ulang" << endl;
+        }
+    }
 }
 
 void kasir() {
+    system("cls");
     int opsiKasir;
     bool pilihKasir = true;
     while (pilihKasir) {
-        cout << "\n| ==== MENU KASIR ==== |" << endl;
-        cout << "[1] Lihat Katalog" << endl;
-        cout << "[2] Search Buku" << endl;
-        cout << "[3] Lihat Keranjang" << endl;
-        cout << "[4] Hapus Item di Keranjang" << endl;
-        cout << "[5] Pembayaran" << endl;
-        cout << "[6] Kembali ke Menu Utama" << endl;
+        cout << "=================================" << endl;
+        cout << "||          MENU KASIR         ||" << endl;
+        cout << "=================================" << endl;
+        cout << "[1] Lihat Katalog              ||" << endl;
+        cout << "[2] Search Buku                ||" << endl;
+        cout << "[3] Lihat Keranjang            ||" << endl;
+        cout << "[4] Hapus Item di Keranjang    ||" << endl;
+        cout << "[5] Pembayaran                 ||" << endl;
+        cout << "[6] Kembali ke Menu Utama      ||" << endl;
         cout << "Pilih menu: ";
         cin >> opsiKasir;
 
@@ -424,6 +467,12 @@ void kasir() {
             case 3:
                 lihatKeranjang();
                 break;
+            case 4:
+                hapusKeranjang();
+                break;
+            case 5:
+                pembayaran();
+                break;
             case 6:
                 pilihKasir = false; 
                 break;
@@ -434,6 +483,7 @@ void kasir() {
 }
 
 void searchBuku() {
+    system("cls");
     DataBuku *temp;
     char cariISBN[20];
     temp = head;
@@ -443,7 +493,7 @@ void searchBuku() {
     
     if (head == NULL) {
         cout << "Data buku masih kosong, silakan isi melalui Menu Admin" << endl;
-        admin(); // Kembali ke menu admin
+        admin(); // Masuk ke menu admin
     }
 
     printf("Masukkan ISBN yang ingin dicari: "); scanf("%s", cariISBN);
@@ -481,9 +531,9 @@ void searchBuku() {
                     return;
                 }
                 else if (toupper(backToMenu) == 'N') {
-                    //system("cls");
+                    system("cls");
                     cout << "Terima kasih!" << endl;
-                    //system("pause");
+                    system("pause");
                     exit(1);
                 }
             }
@@ -499,9 +549,9 @@ void searchBuku() {
             return;
         }
         else if (toupper(backToMenu) == 'N') {
-            //system("cls");
+            system("cls");
             cout << "Terima kasih!" << endl;
-            //system("pause");
+            system("pause");
             exit(1);
         }
     }
@@ -509,7 +559,8 @@ void searchBuku() {
     
 }
 
-void tambahKeranjang(DataBuku *katalogBuku) {
+void tambahKeranjang(DataBuku *searchBuku) {
+    system("cls");
     int jumlahBeli;
     cout << "Masukkan jumlah beli: "; cin >> jumlahBeli;
 
@@ -518,15 +569,15 @@ void tambahKeranjang(DataBuku *katalogBuku) {
         return;
     }
 
-    if (jumlahBeli <= katalogBuku->stok) { // Jika jumlah beli tidak melebihi stok buku yang ada
+    if (jumlahBeli <= searchBuku->stok) { // Jika jumlah beli tidak melebihi stok buku yang ada
         DataBuku *newNode = (DataBuku *) malloc(sizeof(DataBuku));
 
         // Salin node hasil search buku ke node di keranjang
-        strcpy(newNode->isbn, katalogBuku->isbn);
-        strcpy(newNode->judul, katalogBuku->judul);
-        strcpy(newNode->penulis, katalogBuku->penulis);
+        strcpy(newNode->isbn, searchBuku->isbn);
+        strcpy(newNode->judul, searchBuku->judul);
+        strcpy(newNode->penulis, searchBuku->penulis);
         newNode->stok = jumlahBeli; // Menyimpan kuantitas buku yang dibeli
-        newNode->harga = katalogBuku->harga;
+        newNode->harga = searchBuku->harga;
 
         newNode->prev = NULL;
         newNode->next = NULL;
@@ -543,11 +594,12 @@ void tambahKeranjang(DataBuku *katalogBuku) {
         cout << "Buku berhasil dimasukkan ke keranjang!" << endl;
     }
     else {
-        cout << "Stok tidak mencukupi! (Sisa stok adalah " << katalogBuku->stok << ")" << endl;
+        cout << "Stok tidak mencukupi! (Sisa stok adalah " << searchBuku->stok << ")" << endl;
     }
 }
 
 void lihatKeranjang() {
+    system("cls");
     DataBuku *temp;
     temp = keranjangHead;
     bool kembali = true;
@@ -586,6 +638,7 @@ void lihatKeranjang() {
 }
 
 void hapusKeranjang() {
+    system("cls");
     if (keranjangHead == NULL) {
         cout << "Keranjang kosong!\n";
         return;
@@ -631,19 +684,36 @@ void hapusKeranjang() {
 }
 
 void pembayaran() {
-    if (keranjangHead == NULL) {
+    system("cls");
+    DataBuku *temp;
+    temp = keranjangHead;
+    double total = 0;
+    
+    if (temp == NULL) {
         cout << "Keranjang kosong!\n";
         return;
     }
-
-    DataBuku *temp = keranjangHead;
-    double total = 0;
-
-    // Hitung total
+    
+    cout << setfill(' ') << setw(35) << " " << endl;
+    cout << "K E R A N J A N G  B U K U";
+    cout << setfill(' ') << setw(35) << " " << endl;
+    cout << setfill('=') << setw(96) << "" << setfill(' ') << endl;
+    printf("| %-10s | %-26s | %-20s | %-5s | %-19s |\n", "ISBN", "JUDUL", "PENULIS", "STOK", "HARGA");
+    cout << setfill('=') << setw(96) << "" << setfill(' ') << endl;
     while (temp != NULL) {
+        printf("| %-10s | %-26s | %-20s | %-5d | Rp%-17.2lf |\n", temp->isbn, temp->judul, temp->penulis, temp->stok, temp->harga);
         total += temp->stok * temp->harga;
         temp = temp->next;
     }
+    cout << setfill('=') << setw(96) << "" << setfill(' ') << endl;
+
+    
+
+    // Hitung total
+    /* while (temp != NULL) {
+        
+        temp = temp->next;
+    } */
 
     cout << "Total pembayaran: Rp" << total << endl;
 
