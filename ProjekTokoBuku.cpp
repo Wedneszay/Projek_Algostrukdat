@@ -53,7 +53,7 @@ int main()
         cout << "=================================" << endl;
         cout << "[1] Admin                      ||" << endl;
         cout << "[2] Kasir                      ||" << endl;
-        cout << "[3] Keluar                     ||" << endl;
+        cout << "[0] Keluar                     ||" << endl;
         cout << "--------------------------=======" << endl;
         cout << "Pilih Role: ";
 
