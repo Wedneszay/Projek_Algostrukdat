@@ -1,4 +1,4 @@
 12404;Animal Farm;George S. Well;29;110000.00;
 12402;Atomic Habits;James Clear;43;120000.00;
 12403;Koala Kumal;Raditya Dika;27;95000.00;
-12401;Laut Bercerita;Leila S. Chudori;22;80000.00;
+12401;Laut Bercerita;Leila S. Chudori;16;80000.00;

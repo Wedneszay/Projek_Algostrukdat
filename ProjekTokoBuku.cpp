@@ -47,12 +47,15 @@ int main()
 
     while (pilihRole) {
         system("cls");
-        cout << "PROGRAM MANAJEMEN TOKO BUKU" << endl;
-        cout << "MENU ROLE" << endl;
-        cout << "[1] Admin" << endl;
-        cout << "[2] Kasir" << endl;
-        cout << "[0] Keluar" << endl;
-        cout << "Silahkan pilih role anda: ";
+        cout << "=================================" << endl;
+        cout << "|| PROGRAM MANAJEMEN TOKO BUKU ||" << endl;
+        cout << "||           MENU ROLE         ||" << endl;
+        cout << "=================================" << endl;
+        cout << "[1] Admin                      ||" << endl;
+        cout << "[2] Kasir                      ||" << endl;
+        cout << "[3] Keluar                     ||" << endl;
+        cout << "--------------------------=======" << endl;
+        cout << "Pilih Role: ";
 
         cin >> opsiRole;
 
@@ -132,6 +135,7 @@ void admin() {
         cout << "[3] Hapus Buku                 ||" << endl;
         cout << "[4] Update Stok Buku           ||" << endl;
         cout << "[5] Kembali ke Menu Utama      ||" << endl;
+        cout << "--------------------------=======" << endl;
         cout << "Pilih menu: ";
         cin >> opsiAdmin;
 
@@ -418,6 +422,7 @@ void updateStokBuku() {
         temp = temp->next;
     }
     if (found) {
+        cout << "--------------------------=======" << endl;
         cout << "[MESSAGE] Stok berhasil diupdate!\n";
     }
     else {
@@ -441,10 +446,10 @@ void updateStokBuku() {
 }
 
 void kasir() {
-    system("cls");
     int opsiKasir;
     bool pilihKasir = true;
     while (pilihKasir) {
+        system("cls");
         cout << "=================================" << endl;
         cout << "||          MENU KASIR         ||" << endl;
         cout << "=================================" << endl;
@@ -454,6 +459,7 @@ void kasir() {
         cout << "[4] Hapus Item di Keranjang    ||" << endl;
         cout << "[5] Pembayaran                 ||" << endl;
         cout << "[6] Kembali ke Menu Utama      ||" << endl;
+        cout << "--------------------------=======" << endl;
         cout << "Pilih menu: ";
         cin >> opsiKasir;
 
@@ -495,7 +501,9 @@ void searchBuku() {
         cout << "Data buku masih kosong, silakan isi melalui Menu Admin" << endl;
         admin(); // Masuk ke menu admin
     }
-
+    cout << "=========================================" << endl;
+    cout << "||             SEARCH BUKU             ||" << endl;
+    cout << "=========================================" << endl;
     printf("Masukkan ISBN yang ingin dicari: "); scanf("%s", cariISBN);
 
     while(temp != NULL && !found) {
@@ -507,7 +515,7 @@ void searchBuku() {
     }
 
     if (found) {
-        cout << "K A T A L O G  B U K U";
+        cout << "\nK A T A L O G  B U K U";
         cout << setfill(' ') << setw(37) << " " << endl;
         cout << setfill('=') << setw(96) << "" << setfill(' ') << endl;
         printf("| %-10s | %-26s | %-20s | %-5s | %-19s |\n", "ISBN", "JUDUL", "PENULIS", "STOK", "HARGA");
@@ -560,8 +568,11 @@ void searchBuku() {
 }
 
 void tambahKeranjang(DataBuku *searchBuku) {
-    system("cls");
+    /* system("cls"); */
     int jumlahBeli;
+    cout << "\n=========================================" << endl;
+    cout << "||             SEARCH BUKU             ||" << endl;
+    cout << "=========================================" << endl;
     cout << "Masukkan jumlah beli: "; cin >> jumlahBeli;
 
     if (jumlahBeli <= 0) { // Jika stok buku yang dimasukkan <= 0
@@ -756,5 +767,6 @@ void pembayaran() {
         free(hapus);
     }
     keranjangTail = NULL;
+    system("pause");
 }
 
