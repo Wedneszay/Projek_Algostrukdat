@@ -280,6 +280,9 @@ void tambahBuku() {
     int stok;
     double harga;
 
+    cout << "=========================================" << endl;
+    cout << "||             SEARCH BUKU             ||" << endl;
+    cout << "=========================================" << endl;
     printf("Masukkan ISBN    : ");
     scanf(" %[^\n]", newNode->isbn);
     printf("Masukkan Judul   : ");
